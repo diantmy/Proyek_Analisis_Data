@@ -13,11 +13,23 @@ st.set_page_config(
 # LOAD DATA
 @st.cache_data
 def load_data():
-    df = pd.read_csv("dashboard/main_data.csv")
+    @st.cache_data
+def load_data():
 
+    import os
+
+    BASE_DIR = os.path.dirname(__file__)
+
+    file_path = os.path.join(
+        BASE_DIR,
+        "main_data.csv"
+    )
+
+    df = pd.read_csv(file_path)
 
     df["order_purchase_timestamp"] = pd.to_datetime(
-        df["order_purchase_timestamp"]
+        df["order_purchase_timestamp"],
+        errors="coerce"
     )
 
     return df
@@ -105,26 +117,34 @@ ax.set_ylabel("Category")
 st.pyplot(fig)
 
 # MONTHLY ORDERS TREND
-st.subheader(
-    "Monthly Orders Trend"
+st.subheader("Monthly Orders Trend")
+
+monthly_orders = filtered_df.copy()
+
+monthly_orders["year_month"] = (
+    monthly_orders["order_purchase_timestamp"]
+    .dt.to_period("M")
+    .astype(str)
 )
 
 monthly_orders = (
-    filtered_df
-    .set_index("order_purchase_timestamp")
-    .resample("M")
+    monthly_orders
+    .groupby("year_month")
     .size()
+    .reset_index(name="total_orders")
 )
 
 fig, ax = plt.subplots(figsize=(12,5))
 
-monthly_orders.plot(
+sns.lineplot(
+    data=monthly_orders,
+    x="year_month",
+    y="total_orders",
     marker="o",
     ax=ax
 )
 
-ax.set_xlabel("Month")
-ax.set_ylabel("Orders")
+plt.xticks(rotation=45)
 
 st.pyplot(fig)
 
