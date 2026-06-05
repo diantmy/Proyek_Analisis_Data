@@ -13,8 +13,6 @@ st.set_page_config(
 # LOAD DATA
 @st.cache_data
 def load_data():
-    @st.cache_data
-def load_data():
 
     import os
 
