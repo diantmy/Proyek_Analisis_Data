@@ -11,10 +11,9 @@ st.set_page_config(
 )
 
 # LOAD DATA
+import os
 @st.cache_data
 def load_data():
-
-    import os
 
     BASE_DIR = os.path.dirname(__file__)
 
@@ -38,7 +37,10 @@ main_df = load_data()
 st.sidebar.header("Filter Data")
 
 years = sorted(
-    main_df["order_purchase_timestamp"].dt.year.unique()
+    main_df["order_purchase_timestamp"]
+    .dt.year
+    .dropna()
+    .unique()
 )
 
 selected_year = st.sidebar.selectbox(
