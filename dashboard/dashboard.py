@@ -13,14 +13,7 @@ st.set_page_config(
 # LOAD DATA
 @st.cache_data
 def load_data():
-    BASE_DIR = os.path.dirname(__file__)
-
-    file_path = os.path.join(
-        BASE_DIR,
-        "main_data.csv"
-    )
-
-    df = pd.read_csv(file_path)
+    df = pd.read_csv("dashboard/main_data.csv")
 
 
     df["order_purchase_timestamp"] = pd.to_datetime(
